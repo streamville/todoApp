@@ -6,23 +6,19 @@ var todoList = {
             todoText: todoText,
             completed: false
         });
-    this.displayTodos();
     },
 
     changeTodo: function(position, todoText){
         this.todos[position].todoText = todoText;
-        this.displayTodos();
     },
 
     deleteTodo: function(position){
         this.todos.splice(position, 1);
-        this.displayTodos();
     },
 
     toggleCompleted: function(position){
         var todo = this.todos[position];
         todo.completed = !todo.completed;
-        this.displayTodos();
     },
 
     toggleAll: function(){
@@ -46,7 +42,6 @@ var todoList = {
                 this.todos[i].completed = true;
             }
         }
-        this.displayTodos();
     }
 };
 
@@ -67,10 +62,8 @@ var handlers = {
         changeText.value = '';
         view.displayTodos();
     },
-    deleteTodo: function(){
-        var deletePosition = document.getElementById('deletePosition');
-        todoList.deleteTodo(deletePosition.valueAsNumber);
-        deletePosition.value = '';
+    deleteTodo: function(position){
+        todoList.deleteTodo(position);
         view.displayTodos();
     },
     toggleCompleted: function(){
@@ -86,10 +79,14 @@ var handlers = {
 };
 
 var view = {
-    displayTodos: function(){
+
+        /* displayTodos is the method that actually renders all the todos that is being inputted. */
+      displayTodos: function(){
         var todoUl = document.querySelector('ul');
+        
         // clearing the list so it doesn't render extra li.
         todoUl.innerHTML = '';
+
         for(var i = 0; i < todoList.todos.length; i++){
             var todoLi = document.createElement('li');
             var todo = todoList.todos[i];
@@ -100,8 +97,35 @@ var view = {
             } else {
                 todoTextWithCompletion = '( ) ' + todo.todoText;
             }
+
+            todoLi.id = i;
             todoLi.textContent = todoTextWithCompletion;
+            // append the delete button
+            todoLi.appendChild(this.createDeleteBtn());
             todoUl.appendChild(todoLi);
         }
-    }
+    },
+
+    /* New method for creating the delete button */
+    createDeleteBtn: function(){
+        var deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.className = 'deleteBtn';
+        return deleteBtn;
+    },
+    setupEventListeners: function(){
+        var todoUl = document.querySelector('ul');
+            todoUl.addEventListener('click', function(){
+            console.log(event.target.parentNode.id);
+
+            // Get the element that was clicked on.
+            var elementClicked = event.target;
+
+            // Check if elementClicked is a delete button.
+            if(elementClicked.className === 'deleteBtn'){
+                handlers.deleteTodo(parseInt(elementClicked.parentNode.id));
+                }
+            });
+        }
 };
+view.setupEventListeners();
