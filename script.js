@@ -25,23 +25,22 @@ var todoList = {
         var totalTodos = this.todos.length;
         var completedTodos = 0;
 
-        //get number of completed todos.
-        for(var i = 0; i < totalTodos; i++){
-            if(this.todos[i].completed === true){
+        // Get number of completed todos.
+        this.todos.forEach(function(todo){
+            if(todo.completed === true){
                 completedTodos++;
             }
-        }
+        });
+
+        this.todos.forEach(function(todo){
         // Case 1: if everything is true, make everything false.
         if(completedTodos === totalTodos){
-            for(var i = 0; i < totalTodos; i++){
-                this.todos[i].completed = false;
-            }
-        // Case 2: Otherwise, make evertyhing true.
+            todo.completed = false;
         } else {
-            for(var i = 0; i < totalTodos; i++){
-                this.todos[i].completed = true;
+            // Case 2: Otherwise, make evertyhing true.
+            todo.completed = true;
             }
-        }
+        });
     }
 };
 
@@ -87,9 +86,9 @@ var view = {
         // clearing the list so it doesn't render extra li.
         todoUl.innerHTML = '';
 
-        for(var i = 0; i < todoList.todos.length; i++){
+        todoList.todos.forEach(function(todo,position){
             var todoLi = document.createElement('li');
-            var todo = todoList.todos[i];
+            var todo = todoList.todos[position];
             var todoTextWithCompletion  = '';
 
             if(todo.completed === true){
@@ -98,12 +97,12 @@ var view = {
                 todoTextWithCompletion = '( ) ' + todo.todoText;
             }
 
-            todoLi.id = i;
-            todoLi.textContent = todoTextWithCompletion;
-            // append the delete button
-            todoLi.appendChild(this.createDeleteBtn());
-            todoUl.appendChild(todoLi);
-        }
+        todoLi.id = position;
+        todoLi.textContent = todoTextWithCompletion;
+        // Append the delete button.
+        todoLi.appendChild(this.createDeleteBtn());
+        todoUl.appendChild(todoLi);
+        }, this);
     },
 
     /* New method for creating the delete button */
